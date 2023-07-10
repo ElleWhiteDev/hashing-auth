@@ -1,8 +1,6 @@
 {% extends 'base.html' %} {% block content %}
 <h1 class="display-1">Add Feedback</h1>
-<p class="lead">
-	Record your feedback below. Press save to submit. 
-</p>
+<p class="lead">Record your feedback below. Press save to submit.</p>
 
 <form method="POST">
 	{{ form.hidden_tag() }} {% for field in form if field.widget.input_type !=

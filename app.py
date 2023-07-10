@@ -25,6 +25,7 @@ db.create_all()
 def home_page():
     return redirect('/register')
 
+
 @app.route('/register', methods=["GET", "POST"])
 def register_user():
     form = RegisterForm()
@@ -34,7 +35,8 @@ def register_user():
         email = form.email.data
         first_name = form.first_name.data
         last_name = form.last_name.data
-        new_user = User.register(username, password, email, first_name, last_name)
+        new_user = User.register(
+            username, password, email, first_name, last_name)
 
         db.session.add(new_user)
         try:
@@ -43,7 +45,8 @@ def register_user():
             form.username.errors.append('Username taken')
             return render_template('register.html', form=form)
         session['username'] = new_user.username
-        flash(f"Welcome {new_user.first_name}! Account Creation Successful!", 'success')
+        flash(
+            f"Welcome {new_user.first_name}! Account Creation Successful!", 'success')
         return redirect(f'/users/{username}')
 
     return render_template('register.html', form=form)
@@ -79,7 +82,6 @@ def logout_user():
     return redirect('/')
 
 
-
 @app.route('/users/<username>')
 def user_page(username):
     if username != session['username']:
@@ -90,26 +92,28 @@ def user_page(username):
     feedback = Feedback.query.filter_by(username=username).all()
     print(feedback)
     return render_template("user_page.html", user=user, feedback=feedback)
-    
+
 
 @app.route("/users/<username>/delete", methods=["POST"])
 def delete_user(username):
     if username != session['username']:
         flash('Please login first', 'danger')
         return redirect('/login')
-    
+
     user = User.query.get(username)
     if user:
         db.session.delete(user)
         db.session.commit()
-        flash("User Deleted", 'info')
+        flash(f"{username} Deleted Successfully", 'info')
+
+        session.pop('username')
     else:
         flash('User not found', 'danger')
 
     return redirect('/')
 
 
-@app.route('/users/<username>/feedback/add', methods=["GET","POST"])
+@app.route('/users/<username>/feedback/add', methods=["GET", "POST"])
 def add_feedback(username):
     if username != session['username']:
         flash('Please login first', 'danger')
@@ -120,7 +124,8 @@ def add_feedback(username):
             title = form.title.data
             content = form.content.data
 
-            new_feedback = Feedback(title=title, content=content, username=username)
+            new_feedback = Feedback(
+                title=title, content=content, username=username)
             db.session.add(new_feedback)
             db.session.commit()
             flash("Feedback Saved", 'success')
@@ -156,9 +161,10 @@ def delete_feedback(feedback_id):
 
     if username != session['username']:
         flash('Please login first', 'danger')
-        return redirect('/login') 
-    
+        return redirect('/login')
+
     db.session.delete(feedback)
     db.session.commit()
-    flash("Feedback Deleted", 'info')
+    flash("Feedback Deleted Successfully", 'info')
+
     return redirect(f"/users/{feedback.user.username}")
