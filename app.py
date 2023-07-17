@@ -29,8 +29,9 @@ def home_page():
 @app.route('/register', methods=["GET", "POST"])
 def register_user():
     if 'username' in session:
+        username = session['username']
         return redirect(f'/users/{username}')
-    
+
     form = RegisterForm()
     if form.validate_on_submit():
         username = form.username.data
